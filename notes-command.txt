@@ -1,0 +1,149 @@
+
+
+Epoch 00040: reducing learning rate to 9.999999974752428e-08.
+2442s - loss: 0.0081 - dice_loss: 0.9958 - val_loss: 0.0083 - val_dice_loss: 0.9958
+Epoch 00040: early stopping
+time elapsed: 100415.6126191616
+dict_keys(['val_dice_loss', 'dice_loss', 'val_loss', 'loss', 'lr'])
+Traceback (most recent call last):
+  File "train.py", line 179, in <module>
+    plt.plot(loss_history.history['loss'])
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/pyplot.py", line 3306, in plot
+    ax = gca()
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/pyplot.py", line 950, in gca
+    return gcf().gca(**kwargs)
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/pyplot.py", line 586, in gcf
+    return figure()
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/pyplot.py", line 535, in figure
+    **kwargs)
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/backends/backend_qt5agg.py", line 44, in new_figure_manager
+    return new_figure_manager_given_figure(num, thisFig)
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/backends/backend_qt5agg.py", line 51, in new_figure_manager_given_figure
+    canvas = FigureCanvasQTAgg(figure)
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/backends/backend_qt5agg.py", line 242, in __init__
+    super(FigureCanvasQTAgg, self).__init__(figure=figure)
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/backends/backend_qt5agg.py", line 66, in __init__
+    super(FigureCanvasQTAggBase, self).__init__(figure=figure)
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/backends/backend_qt5.py", line 236, in __init__
+    _create_qApp()
+  File "/home/ubuntu/anaconda3/envs/py353/lib/python3.5/site-packages/matplotlib/backends/backend_qt5.py", line 144, in _create_qApp
+    raise RuntimeError('Invalid DISPLAY variable')
+RuntimeError: Invalid DISPLAY variable
+
+
+
+
+http://lendguitar.ddns.net/
+
+
+lendguitar.ddns.net
+
+
+STAGING_SERVER=superlists-staging.ottg.eu python manage.py test functional_tests
+
+
+STAGING_SERVER=lendguitar.ddns.net python manage.py test functional_tests
+
+
+
+
+export SITENAME=lendguitar.ddns.net
+mkdir -p ~/sites/$SITENAME/database
+mkdir -p ~/sites/$SITENAME/static
+mkdir -p ~/sites/$SITENAME/virtualenv
+
+
+
+git clone https://github.com/sunpochin/pythontdd.git \
+~/sites/$SITENAME/source
+
+
+git clone https://github.com/sunpochin/pythontdd.git \
+~/sites/staging.superlists.com/source
+
+../virtualenv/bin/pip install -r requirements.txt
+
+
+
+
+server {
+    listen 80;
+    server_name lendguitar.ddns.net;
+
+    location / {
+        proxy_pass http://localhost:8000;
+    }
+}
+
+
+
+
+staging.superlists.com
+staging.lendguitar.ddns.net
+
+    location /static {
+        alias /home/elspeth/sites/staging.lendguitar.ddns.net/static;
+    }
+
+
+../virtualenv/bin/gunicorn --bind unix:/tmp/staging.lendguitar.ddns.net superlists.wsgi:application
+
+
+
+
+/etc/nginx/sites-available/lendguitar.ddns.net 
+
+
+
+server {
+    listen 80;
+    server_name lendguitar.ddns.net;
+
+    location /static {
+        alias /home/elspeth/sites/staging.lendguitar.ddns.net/static;
+    }
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_pass http://unix:/tmp/lendguitar.ddns.net.socket;
+    }
+
+}
+
+
+
+
+sudo ../virtualenv/bin/gunicorn --bind unix:/tmp/staging.lendguitar.ddns.net.socket superlists.wsgi:application
+
+
+sudo journalctl -u gunicorn-superlists-staging.ottg.eu
+
+sudo journalctl -u gunicorn
+
+
+
+sudo nano /etc/systemd/system/gunicorn-staging.lendguitar.ddns.net.service
+
+
+[Unit]
+Description=Gunicorn server for staging.lendguitar.ddns.net
+
+[Service]
+Restart=on-failure  
+User=elspeth  
+WorkingDirectory=/home/elspeth/sites/staging.lendguitar.ddns.net/source  
+ExecStart=/home/elspeth/sites/staging.lendguitar.ddns.net/virtualenv/bin/gunicorn \
+    --bind unix:/tmp/staging.lendguitar.ddns.net.socket \
+    superlists.wsgi:application  
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+sudo systemctl daemon-reload
+sudo systemctl enable gunicorn-staging.lendguitar.ddns.net
+sudo systemctl start gunicorn-staging.lendguitar.ddns.net
+
+
+
