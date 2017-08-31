@@ -4,6 +4,15 @@ import random
 
 REPO_URL = 'https://github.com/sunpochin/pythontdd.git'
 
+'''
+#http://disq.us/p/1im0305
+#For the ones who use AWS, you may want to add the following after REPO_URL:
+#REPO_URL = 'https://github.com/XXX/YYY'
+#env.user = "ubuntu"
+#env.key_filename = ["C:/path/to/key/keypair.pem"]
+#env.hosts = ["xxx-xx-xxx-xxx.ap-southeast-1.compute.amazonaws.com"]
+'''
+
 def deploy():
     site_folder = f'/home/{env.user}/sites/{env.host}'
     source_folder = site_folder + '/source'

@@ -91,7 +91,7 @@ staging.lendguitar.ddns.net
 
 
 
-/etc/nginx/sites-available/lendguitar.ddns.net 
+/etc/nginx/sites-available/lendguitar.ddns.net
 
 
 
@@ -129,12 +129,12 @@ sudo nano /etc/systemd/system/gunicorn-staging.lendguitar.ddns.net.service
 Description=Gunicorn server for staging.lendguitar.ddns.net
 
 [Service]
-Restart=on-failure  
-User=elspeth  
-WorkingDirectory=/home/elspeth/sites/staging.lendguitar.ddns.net/source  
+Restart=on-failure
+User=elspeth
+WorkingDirectory=/home/elspeth/sites/staging.lendguitar.ddns.net/source
 ExecStart=/home/elspeth/sites/staging.lendguitar.ddns.net/virtualenv/bin/gunicorn \
     --bind unix:/tmp/staging.lendguitar.ddns.net.socket \
-    superlists.wsgi:application  
+    superlists.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
@@ -146,4 +146,107 @@ sudo systemctl enable gunicorn-staging.lendguitar.ddns.net
 sudo systemctl start gunicorn-staging.lendguitar.ddns.net
 
 
+elspeth
 
+lendguitar.ddns.net
+
+fab deploy:host=elspeth@lendguitar.ddns.net
+fab deploy:host=elspeth@staging-lendguitar.ddns.net
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+maine:
+0.
+local:
+fab deploy:host=elspeth@lendguitar.ddns.net
+
+
+1.
+export SITENAME=lendguitar.ddns.net
+echo $SITENAME
+sudo ln -s ../sites-available/$SITENAME /etc/nginx/sites-enabled/$SITENAME
+ls -l /etc/nginx/sites-enabled
+
+2.
+sed "s/SITENAME/lendguitar.ddns.net/g" \
+    source/deploy_tools/nginx.template.conf \
+    | sudo tee /etc/nginx/sites-available/lendguitar.ddns.net
+
+3.
+sed "s/SITENAME/lendguitar.ddns.net/g" \
+    source/deploy_tools/gunicorn-systemd.template.service \
+    | sudo tee /etc/systemd/system/gunicorn-lendguitar.ddns.net.service
+
+4.
+sudo systemctl daemon-reload
+sudo systemctl reload nginx
+sudo systemctl enable gunicorn-lendguitar.ddns.net
+sudo systemctl start gunicorn-lendguitar.ddns.net
+
+
+
+
+staging:
+0.
+local
+fab deploy:host=elspeth@staging-lendguitar.ddns.net
+
+1.
+export SITENAME=staging-lendguitar.ddns.net
+echo $SITENAME
+sudo ln -s ../sites-available/$SITENAME /etc/nginx/sites-enabled/$SITENAME
+ls -l /etc/nginx/sites-enabled
+
+2.
+sed "s/SITENAME/staging-lendguitar.ddns.net/g" \
+ source/deploy_tools/nginx.template.conf \
+  | sudo tee /etc/nginx/sites-available/staging-lendguitar.ddns.net
+
+3.
+sed "s/SITENAME/staging-lendguitar.ddns.net/g" \
+    source/deploy_tools/gunicorn-systemd.template.service \
+    | sudo tee /etc/systemd/system/gunicorn-staging-lendguitar.ddns.net.service
+
+
+4.
+sudo systemctl daemon-reload
+sudo systemctl reload nginx
+sudo systemctl enable gunicorn-staging-lendguitar.ddns.net
+sudo systemctl start gunicorn-staging-lendguitar.ddns.net
+
+
+
+
+
+
+
+0.
+lendguitar.ddns.net
+staging-lendguitar.ddns.net
+
+
+2.
+3.
+
+5.
+
+
+ps aux | grep gunicorn
+
+
+ssh elspeth@staging-lendguitar.ddns.net
+
+sudo apt-get upgrade linux-headers-generic linux-headers-virtual linux-image-virtual linux-virtual
