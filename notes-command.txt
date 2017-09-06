@@ -228,20 +228,9 @@ sudo systemctl enable gunicorn-staging-lendguitar.ddns.net
 sudo systemctl start gunicorn-staging-lendguitar.ddns.net
 
 
-
-
-
-
-
 0.
 lendguitar.ddns.net
 staging-lendguitar.ddns.net
-
-
-2.
-3.
-
-5.
 
 
 ps aux | grep gunicorn
@@ -250,3 +239,75 @@ ps aux | grep gunicorn
 ssh elspeth@staging-lendguitar.ddns.net
 
 sudo apt-get upgrade linux-headers-generic linux-headers-virtual linux-image-virtual linux-virtual
+
+lendguitar.ddns.net
+
+
+
+kill all gunicorn
+ps aux | grep -ie gunicorn | awk '{print "kill -9 " $2}'
+
+ps aux | grep -ie gunicorn | awk '{print $2}' | xargs kill -9
+
+
+
+
+
+
+sudo apt-get install \
+  linux-image-extra-$(uname -r) \
+  linux-image-extra-virtual
+
+sudo apt-get install linux-image-extra-virtual
+
+
+
+sudo apt-get install \
+  apt-transport-https \
+  ca-certificates \
+  curl \
+  software-properties-common
+
+
+
+sudo add-apt-repository \
+  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) \
+  stable"
+
+
+
+curl -L https://github.com/docker/compose/releases/download/1.12.0/docker-compose-`uname -s`-`uname -m` > ./docker-compose
+sudo mv ./docker-compose /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose
+
+
+
+
+albedo token:
+all
+e8a9fa7643d9add81a508f24a502a07c93c6935e
+
+with nothing:
+f2bba99de62097959bd0335f7da8956be212349d
+
+
+
+python manage.py migrate
+python manage.py collect_data -t e8a9fa7643d9add81a508f24a502a07c93c6935e -u sunpochin
+python manage.py collect_data -t f2bba99de62097959bd0335f7da8956be212349d -u sunpaaaa
+
+
+
+# or
+$ (container) 
+wget https://s3-ap-northeast-1.amazonaws.com/files.albedo.one/albedo.sql
+$ (container) 
+mysql -h mysql -u root -p123 albedo < albedo.sql
+
+
+
+
+make run
+open http://127.0.0.1:8000/admin/
+
